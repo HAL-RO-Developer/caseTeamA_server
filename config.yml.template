@@ -1,0 +1,5 @@
+develop:
+  dialect: mysql
+  datasource: root:@tcp(127.0.0.1:3306)/case_teamA?parseTime=true&collation=utf8_general_ci&interpolateParams=true&loc=Local
+  dir: migration
+
