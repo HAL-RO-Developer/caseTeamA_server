@@ -13,11 +13,6 @@ var Reader = readerimpl{}
 type readerimpl struct {
 }
 
-type reader struct {
-	deviceId string
-	Status   string
-}
-
 // リーダーで読み取った情報の送信
 func (r *readerimpl) SendTag(c *gin.Context) {
 	req, ok := validation.ReaderValidation(c)
@@ -28,33 +23,38 @@ func (r *readerimpl) SendTag(c *gin.Context) {
 
 	device, find := service.GetDeviceInfoFromDeviceId(req.DeviceId)
 
-	if find {
-		_, result := service.SendUserAnswer(req.DeviceId, req.Uuid)
-		if result < 0 {
-			response.BadRequest(gin.H{"error": "回答データを保存できませんでした。"}, c)
-			return
-		}
+	if !find {
+		response.BadRequest(gin.H{"error": "デバイスIDが見つかりませんでした"}, c)
+		return
+	}
+	_, result := service.SendUserAnswer(req.DeviceId, req.Uuid, req.OldUuid)
+	if result < 0 {
+		response.BadRequest(gin.H{"error": result}, c)
+		return
+	}
 
-		// oldRecord, find := service.GetByRecordFromChild(device[0].Name, device[0].ChildId)
-		boccoInfo, find := service.ExisByBoccoAPI(device[0].Name)
-		message, find := service.GetMessageInfoFromTrue(device[0].Name, device[0].ChildId, result)
-		if !find {
-			if result == 0 {
-				response.Json(gin.H{"success": false}, c)
-			} else {
-				response.Json(gin.H{"success": true}, c)
-			}
-			return
-		}
-
-		boccoToken, _ := service.GetBoccoToken(boccoInfo[0].Email, boccoInfo[0].Key, boccoInfo[0].Pass)
-		roomId, _ := service.GetRoomId(boccoToken)
-		uuid := uuid.Must(uuid.NewV4()).String()
-		service.SendMessage(uuid, roomId, boccoToken, message[0].Message)
+	boccoInfo, find := service.ExisByBoccoAPI(device[0].Name)
+	message, find := service.GetMessageInfoFromTrue(device[0].Name, device[0].ChildId, result)
+	if !find {
 		if result == 0 {
 			response.Json(gin.H{"success": false}, c)
-			return
+		} else {
+			response.Json(gin.H{"success": true}, c)
 		}
+		return
+	}
+
+	if result == 3 {
+		message[0].Message = "前回の問題を回答してね"
+	}
+
+	boccoToken, _ := service.GetBoccoToken(boccoInfo[0].Email, boccoInfo[0].Key, boccoInfo[0].Pass)
+	roomId, _ := service.GetRoomId(boccoToken)
+	uuid := uuid.Must(uuid.NewV4()).String()
+	service.SendMessage(uuid, roomId, boccoToken, message[0].Message)
+	if result == 0 || result == 3 {
+		response.Json(gin.H{"success": false}, c)
+		return
 	}
 	response.Json(gin.H{"success": true}, c)
 }

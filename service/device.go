@@ -31,7 +31,7 @@ func CreateDevice(name string, childId int) (string, bool) {
 	return info.Pin, true
 }
 
-// macAddr&デバイスID登録
+// デバイスID登録
 func RegistrationDevice(pin string) (string, bool) {
 	buf, find := GetPin(pin)
 	if !find {

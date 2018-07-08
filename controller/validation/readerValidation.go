@@ -8,6 +8,7 @@ import (
 type Tag struct {
 	DeviceId string `json:"device_id"` // 読み取り機のdeviceID
 	Uuid     string `json:"uuid"`
+	OldUuid string `json:"old_uuid"` // 前回回答データ
 }
 
 func ReaderValidation(c *gin.Context) (Tag, bool) {
