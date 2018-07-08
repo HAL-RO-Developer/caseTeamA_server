@@ -16,9 +16,9 @@ func SendUserAnswer(deviceId string, tagUuid string, oldUuid string) (model.Reco
 	if !find {
 		return model.Record{}, -1
 	}
-
+	
 	if oldUuid != "" {
-		oldTag := GetTagDataFromTagId(tagUuid)
+		oldTag := GetTagDataFromUuid(tagUuid)
 		if oldTag == nil {
 			return model.Record{}, -2
 		}
