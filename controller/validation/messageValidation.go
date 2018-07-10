@@ -12,7 +12,6 @@ type WorkMessge struct {
 	Message     string `json:"message"` // メッセージ内容
 }
 
-
 func WorkMessageValidation(c *gin.Context) (WorkMessge, bool) {
 	var req WorkMessge
 	err := c.BindJSON(&req)

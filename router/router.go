@@ -23,6 +23,10 @@ func GetRouter() *gin.Engine {
 	// デバイス側処理
 	thing := r.Group("/thing")
 	thingRouter(thing)
+
+	// 問題登録
+	question := r.Group("/question")
+	questionRouter(question)
 	return r
 
 }

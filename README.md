@@ -505,7 +505,7 @@ BOCCOAPIに登録したメールアドレスと、パスワードの削除
  
     + Attribute
         + pin: 0000
-        + 
+        
 + Response 200 (application/json)
 
  + Attribute
@@ -540,3 +540,83 @@ BOCCOAPIに登録したメールアドレスと、パスワードの削除
     + Attribute
 
         + error: データベースエラー
+
+# Group 問題作成API
+## 問題作成 [/question/create]
+### 問題データの作成[POST]
+問題データをDBに登録
+
++ Request(application/json)
+	
+	+ Attribute
+		+ book_id: 1(number)
+		+ question_no: 1(number)
+		+ sentence(array)
+			+ (object)
+				+ tag_id: sample
+				+ text: 回文はどれ？
+		+ answer(array)
+			+ (object)
+				+ tag_id: index
+				+ text: 絵本
+			+ (object)
+				+ tag_id: buf
+				+ text: 新聞紙
+			+ (object)
+				+ tag_id: hoge
+				+ text: 漫画
+		+ correct: buf
+		+ genre: 1
+
++ Response 200 (application/json)
+
+    + Attribute
+
+        + success: true (boolean)
+
++ Response 400 (application/json)
+
+    + Attribute
+
+        + error: 登録に失敗しました。
+
+## 分野 [/question/genre]
+### 分野追加[POST]
+問題分野を追加
+
++ Request(application/json)
+	+ Attribute
+		+ genre_name: 英語
+
++ Response 200 (application/json)
+
+    + Attribute
+
+        + genre_id: 1 (number)
+
++ Response 400 (application/json)
+
+    + Attribute
+
+        + error: 登録に失敗しました。
+
+### 分野取得[GET]
+登録されている分野を取得
+
++ Response 200 (application/json)
+
+    + Attribute
+
+        + genre(array)
+        	+ 算数
+        	+ 社会
+        	+ 英語
+
++ Response 400 (application/json)
+
+    + Attribute
+
+        + error: 分野が登録されていませんでした。
+
+
+

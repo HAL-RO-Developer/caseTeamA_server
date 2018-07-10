@@ -1,5 +1,5 @@
 develop:
   dialect: mysql
-  datasource: root:@tcp(127.0.0.1:3306)/case_teamA?parseTime=true&collation=utf8_general_ci&interpolateParams=true&loc=Local
+  datasource: root:password@tcp(hal-iot.c6cx4bn8se6n.ap-northeast-1.rds.amazonaws.com:3306)/case_teamA?parseTime=true&collation=utf8_general_ci&interpolateParams=true&loc=Local
   dir: migration
 

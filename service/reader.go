@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/HAL-RO-Developer/caseTeamA_server/model"
-	_ "github.com/satori/go.uuid"
 	"github.com/satori/go.uuid"
+	_ "github.com/satori/go.uuid"
 )
 
 // ユーザーの回答データ送信
@@ -16,7 +16,7 @@ func SendUserAnswer(deviceId string, tagUuid string, oldUuid string) (model.Reco
 	if !find {
 		return model.Record{}, -1
 	}
-	
+
 	if oldUuid != "" {
 		oldTag := GetTagDataFromUuid(tagUuid)
 		if oldTag == nil {

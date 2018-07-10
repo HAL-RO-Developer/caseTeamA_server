@@ -12,6 +12,7 @@ func main() {
 
 var db = model.GetDBConn()
 
+// ドリル情報作成
 func bookGenerate() {
 	book := model.Book{
 		BookId:  1,
@@ -27,6 +28,7 @@ func bookGenerate() {
 	db.Create(&book2)
 }
 
+// ジャンル作成
 func genreGenerate() {
 	genre := model.Genre{
 		GenreId:   1,
@@ -42,6 +44,7 @@ func genreGenerate() {
 	db.Create(&genre2)
 }
 
+// 問題作成
 func questionGenerate() {
 	question := model.Question{
 		BookId:     1,
@@ -66,13 +69,14 @@ func questionGenerate() {
 	db.Create(&question3)
 }
 
+// 問題タグ
 func sentenceGenerate() {
 	tag := model.Tag{
-		TagId:      "question1_1",
-		Uuid:       "sample",
-		BookId:     1,
-		QuestionNo: 1,
-		Sentence:   "1+1は?",
+		TagId:      "question1_1", // 任意のタグ番号
+		Uuid:       "sample",      // tagのuuid
+		BookId:     1,             // ドリルId
+		QuestionNo: 1,             // ドリルの問題番号
+		Sentence:   "1+1は?",       // 問題文
 	}
 	tag2 := model.Tag{
 		TagId:      "question1_2",
@@ -88,18 +92,19 @@ func sentenceGenerate() {
 		QuestionNo: 1,
 		Sentence:   "兵庫県の県庁所在地は?",
 	}
-	db.Create(&tag)
+	db.Create(&tag) // カラム作成
 	db.Create(&tag2)
 	db.Create(&tag3)
 }
 
+// 回答タグ
 func correctGenerate() {
 	tag := model.Tag{
-		TagId:      "answer1_1_1",
-		Uuid:       "test",
-		BookId:     1,
-		QuestionNo: 1,
-		Answer:     "1",
+		TagId:      "answer1_1_1", // 任意のタグ番号
+		Uuid:       "test",        // タグのuuid
+		BookId:     1,             // ドリルid
+		QuestionNo: 1,             // ドリルの問題番号
+		Answer:     "1",           // タグの回答
 	}
 
 	tag2 := model.Tag{

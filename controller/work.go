@@ -23,10 +23,11 @@ type recordGraphDate struct {
 }
 
 type recordGraphGenre struct {
-	NumProbs int    `json:"num_probs"`
-	Genre    string `json:"genre"`
-	NumAns   int    `json:"num_ans"`
-	NumCorr  int    `json:"num_corr"`
+	Genre       string `json:"genre"`
+	BookId      int    `json:"book_id"`
+	NumProblems int    `json:"num_problems"`
+	NumAns      int    `json:"num_ans"`
+	NumCorr     int    `json:"num_corr"`
 }
 
 type recordInfo struct {
@@ -45,6 +46,7 @@ type recordData struct {
 const layout = "2006-01-02"
 
 // 日付けorジャンルごとのグラフ用回答記録取得
+// Todo 同一問題を回答した時は最新の問題のみ(日付け別も)
 func (r *recordimpl) WorkRecordForGraph(c *gin.Context) {
 	var userDate []recordGraphDate
 	var userGenre []recordGraphGenre
@@ -100,11 +102,16 @@ func (r *recordimpl) WorkRecordForGraph(c *gin.Context) {
 		return
 	}
 	number := service.GetGenreNumber()
-	for i := 1; i <= number; i++ {
+	for i := 1; i < number; i++ {
 		childRecord, find = service.GetByRecordFromGenre(name, childId, i)
 		if !find {
 			userGenre = []recordGraphGenre{}
 		}
+		buf := service.GetGenreData(i)
+		recordGenre.Genre = buf[0].GenreName
+		recordGenre.BookId = childRecord[i].BookId
+
+		recordGenre.NumProblems = service.GetByQuestion(childRecord[i].BookId)
 		if find {
 			recordGenre.NumAns = len(childRecord)
 			for j := 0; len(childRecord) > j; j++ {

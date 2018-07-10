@@ -54,13 +54,21 @@ func GetByCorrect(bookId int, questionNo int) string {
 	return question[0].Correct
 }
 
+// BookIdの問題数を取得
+func GetByQuestion(bookId int) int {
+	var question []model.Question
+	db.Where("book_id = ?", bookId).Find(&question)
+
+	return len(question)
+}
+
 // ジャンル名称の取得
 func GetGenreName(bookId int) string {
 	book := GetBookData(bookId)
 	if book == nil {
 		return ""
 	}
-	genre := getGenreData(book[0].GenreId)
+	genre := GetGenreData(book[0].GenreId)
 	if genre == nil {
 		return ""
 	}
@@ -79,7 +87,7 @@ func GetBookData(bookId int) []model.Book {
 }
 
 // ジャンル情報の取得
-func getGenreData(genreId int) []model.Genre {
+func GetGenreData(genreId int) []model.Genre {
 	var genre []model.Genre
 	err := db.Where("genre_id = ?", genreId).Find(&genre).Error
 	if err != nil {

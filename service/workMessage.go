@@ -76,7 +76,7 @@ func GetWorkMessageFromNameChild(name string, childId int) ([]model.CustomMessag
 // データベースからメッセージ情報取得
 func GetMessageInfoFromSame(name string, childId int, condition int, messageCall int) ([]model.CustomMessage, bool) {
 	var messages []model.CustomMessage
-	db.Where("conditions = ?", condition).Find(&messages)
+	db.Where("name = ? and child_id = ? and conditions = ? and message_call = ?", name, childId, condition, messageCall).Find(&messages)
 	fmt.Println(messages)
 	return messages, len(messages) != 0
 }

@@ -32,6 +32,11 @@ type workMessages struct {
 	Message   string `json:"message"`
 }
 
+type messageCondition struct {
+	Conditions  int
+	MessageCall int
+}
+
 // メッセージ編集
 func (w *workmessageimpl) EditMessage(c *gin.Context) {
 	registData := model.CustomMessage{}
@@ -73,6 +78,10 @@ func (w *workmessageimpl) GetMessage(c *gin.Context) {
 	var sameMessage workMessages
 	var messages []model.CustomMessage
 	var childData []model.UserChild
+	var index messageCondition
+	var condition []messageCondition
+	var skip bool
+	var num int
 
 	name, ok := authorizationCheck(c)
 	if !ok {
@@ -90,27 +99,41 @@ func (w *workmessageimpl) GetMessage(c *gin.Context) {
 	if !find {
 		response.Json(gin.H{"messages": []string{}}, c)
 		return
-	} else {
-		childMsg.ChildId = childId
-		childData, _ = service.GetByChildInfo(name, childId)
-		childMsg.Nickname = childData[0].NickName
-		/* メッセージの数繰り返し */
-		for i := 0; i < len(messages); i++ {
-			message.Condition = messages[i].Conditions
-			message.MessageCall = messages[i].MessageCall
-			// 同一条件メッセージの取得
-			sames, find = service.GetMessageInfoFromSame(name, childId, message.Condition, message.MessageCall)
-			for j := 0; j < len(sames); j++ {
-				sameMessage.MessageId = messages[j].MessageId
-				sameMessage.Message = messages[j].Message
-				message.Message = append(message.Message, sameMessage)
-				sameMessage = workMessages{}
+	}
+	for cnt := 0; cnt < len(messages); cnt++ {
+		skip = false
+		for roop := 0; roop < num; roop++ {
+			if condition[roop].Conditions == messages[cnt].Conditions && condition[roop].MessageCall == messages[cnt].MessageCall {
+				skip = true
 			}
-			childMsg.Messages = append(childMsg.Messages, message)
-			//message.Message = []workMessages{}
-			message = workMessageData{}
+		}
+		if skip != true {
+			index.Conditions = messages[cnt].Conditions
+			index.MessageCall = messages[cnt].MessageCall
+			condition = append(condition, index)
+			index = messageCondition{}
+			num++
 		}
 	}
+	childMsg.ChildId = childId
+	childData, _ = service.GetByChildInfo(name, childId)
+	childMsg.Nickname = childData[0].NickName
+	/* メッセージの数繰り返し */
+	for i := 0; i < len(condition); i++ {
+		message.Condition = condition[i].Conditions
+		message.MessageCall = condition[i].MessageCall
+		// 同一条件メッセージの取得
+		sames, find = service.GetMessageInfoFromSame(name, childId, message.Condition, message.MessageCall)
+		for j := 0; j < len(sames); j++ {
+			sameMessage.MessageId = sames[j].MessageId
+			sameMessage.Message = sames[j].Message
+			message.Message = append(message.Message, sameMessage)
+			sameMessage = workMessages{}
+		}
+		childMsg.Messages = append(childMsg.Messages, message)
+		message = workMessageData{}
+	}
+
 	response.Json(gin.H{"messages": childMsg}, c)
 }
 

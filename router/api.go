@@ -31,7 +31,7 @@ func workRouter(work *gin.RouterGroup) {
 	work.GET("/detail/:child_id", Record.WorkRecordForDetail)
 	work.POST("/message", WorkMessage.EditMessage)
 	work.GET("/message/:child_id", WorkMessage.GetMessage)
-	work.DELETE("/message/:child_id/:message_call", WorkMessage.DeleteMessage)
+	work.DELETE("/message/:message_id", WorkMessage.DeleteMessage)
 }
 
 func thingRouter(thing *gin.RouterGroup) {
@@ -39,4 +39,10 @@ func thingRouter(thing *gin.RouterGroup) {
 	thing.POST("/registration", Device.DeviceRegistration)
 	// ICリーダー
 	thing.POST("/reader", Reader.SendTag)
+}
+
+func questionRouter(question *gin.RouterGroup) {
+	question.POST("/create", Question.CreateQuestion)
+	question.POST("/genre", Question.CreateGenre)
+	question.GET("/genre", Question.GetGenre)
 }
